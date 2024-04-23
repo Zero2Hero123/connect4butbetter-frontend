@@ -8,7 +8,6 @@ import { Game } from './pages/Game'
 import Home from './pages/Home'
 
 const backendUrl = 'https://connect4-backend.vercel.app'
-
 const socket = io(backendUrl)
 
 export const socketCtx = createContext<typeof socket>(socket)
