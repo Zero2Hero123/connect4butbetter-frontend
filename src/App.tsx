@@ -7,10 +7,9 @@ import { Routes, Route } from 'react-router-dom'
 import { Game } from './pages/Game'
 import Home from './pages/Home'
 
-require('dotenv').config()
+const backendUrl = 'https://connect4-backend.vercel.app'
 
-
-const socket = io(process.env.BACKEND_URL as string)
+const socket = io(backendUrl)
 
 export const socketCtx = createContext<typeof socket>(socket)
 function App() {
