@@ -4,12 +4,22 @@ import ChatBox from "../components/ChatBox"
 import { socketCtx } from "../App"
 import { SetStateAction, useContext, useEffect, useState, useRef } from "react"
 import { Navigate } from "react-router-dom"
+import { useToast } from "@/components/ui/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { MessageCircleMore } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 
 interface Player {
     userName: string,
     userId: string,
     color: 'red' | 'yellow' | ''
+}
+
+interface Message {
+    author: string,
+    color: 'red' | 'yellow',
+    content: string
 }
 
 interface Props {
@@ -28,6 +38,10 @@ export function Game({userName, roomId}: Props){
     const [numPlayers,setNumPlayers] = useState(1)
     const [opponent,setOpp] = useState<Player>({userName: '', userId: '', color: ''})
     const [myColor,setColor] = useState<'red' | 'yellow'>('red')
+
+    const [messages,setMessages] = useState<Message[]>([])
+
+    const {toast} = useToast()
 
 
     const returnRef = useRef<HTMLDialogElement>(null)
@@ -48,6 +62,10 @@ export function Game({userName, roomId}: Props){
             setNumPlayers(prev => prev + 1)
             setOpp(user)
 
+            toast({
+                title: `${user.userName} has joined.`
+            })
+
             socket.emit('get-color1')
         })
 
@@ -57,6 +75,12 @@ export function Game({userName, roomId}: Props){
 
             setOpp((prev) => {
                 return {userName: newName, userId: prev.userId, color: prev.color}})
+        })
+
+        socket.on('opp-new-message',(newMessage) => {
+
+            setMessages(prev => [...prev,newMessage])
+
         })
 
         socket.on('set-color',(newColor: 'red' | 'yellow') => {
@@ -79,7 +103,7 @@ export function Game({userName, roomId}: Props){
     return <>
 
         
-        <dialog ref={returnRef} className="absolute top-[45%] bg-blue-800 w-[15%] min-w-[150px] h-[20%] flex flex-col justify-between">
+        <dialog ref={returnRef} className=" absolute top-[45%] bg-blue-800 w-[15%] min-w-[150px] h-[20%] flex flex-col justify-between">
             <h1 className="text-white text-2xl text-center" >Game Ended</h1>
             <a href="/">
                 <button onClick={leave} className="bg-blue-600 text-white px-3 py-1 font-medium hover:bg-blue-500" >Return</button>
@@ -96,9 +120,21 @@ export function Game({userName, roomId}: Props){
                 </div>
             </div>
 
-            <ChatBox myColor={myColor} displayName={userName} />
+            <ChatBox setMessages={setMessages} messages={messages} myColor={myColor} displayName={userName} />
             <Board myColor={myColor} start={started} showReturn={() => {  returnRef.current?.classList.add('z-10'); returnRef.current?.show(); }} />
+            
+            <Dialog>
+                <DialogTrigger asChild className="xl:hidden">
+                    <Button className="bg-blue-700 scale-150">
+                        <MessageCircleMore/>
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="p-0 m-0 border-none w-[80%]">
+                    <ChatBox setMessages={setMessages} messages={messages} myColor={myColor} displayName={userName} isMobile={true} />
+                </DialogContent>
+            </Dialog>
         </div>
+        
     
     </>
 }

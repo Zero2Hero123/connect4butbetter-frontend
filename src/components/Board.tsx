@@ -68,18 +68,7 @@ export default function Board({start, myColor,showReturn, testMode = false}: Pro
         setIsTurn(prev => !prev)
         setCanUse(prev => !prev)
 
-        socket.emit('play-move',{color, column,currBoard},(won: boolean) => {
-            if(won){
-                if(resultRef.current){
-                    resultRef.current.textContent = "You Win!";
-                }
-                
-                showReturn();
-            }
-
-            setIsTurn(false)
-        })
-        console.log('done')
+        socket.emit('play-move',{color: myColor, column,currBoard})
     }
 
     function showPowerUp(name: string){
@@ -92,13 +81,25 @@ export default function Board({start, myColor,showReturn, testMode = false}: Pro
 
     useEffect(() => {
         socket.on('win-event', (winningColor: 'red' | 'yellow') => {
-            
+            console.log("WIN OCCURED")
+
+            console.log('won',winningColor)
+            console.log('my color:',myColor)
+
             if(resultRef.current){
-                resultRef.current.textContent = "You Lost!";
+                resultRef.current.textContent = "You Won!";
             }
 
             showReturn();
 
+            setIsTurn(false)
+        })
+
+        socket.on('lose-event', () =>{
+            if(resultRef.current){
+                resultRef.current.textContent = "You Lost!";
+            }
+            showReturn();
             setIsTurn(false)
         })
 
@@ -163,7 +164,7 @@ export default function Board({start, myColor,showReturn, testMode = false}: Pro
            </div>
 
 
-            <div className="absolute left-0  grid grid-cols-7 w-[100%] aspect-[5/4]" >
+            <div className="absolute left-0  grid grid-cols-7 w-[100%] aspect-[5/4] " >
                 <div onClick={() => addChip(myColor,0)}  className="hover:cursor-pointer opacity-20 transition-all hover:bg-blue-600 "></div>
                 <div onClick={() => addChip(myColor,1)}  className="hover:cursor-pointer opacity-20 transition-all hover:bg-blue-600 "></div>
                 <div onClick={() => addChip(myColor,2)}  className="hover:cursor-pointer opacity-20 transition-all hover:bg-blue-600 "></div>

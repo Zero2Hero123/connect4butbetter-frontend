@@ -6,8 +6,9 @@ import io, { SocketOptions } from 'socket.io-client'
 import { Routes, Route } from 'react-router-dom'
 import { Game } from './pages/Game'
 import Home from './pages/Home'
+import { Toaster } from './components/ui/toaster'
 
-const backendUrl = 'https://connect4-backend.vercel.app'
+const backendUrl = 'ws://localhost:3000'
 const socket = io(backendUrl)
 
 export const socketCtx = createContext<typeof socket>(socket)
@@ -26,6 +27,7 @@ function App() {
 
         </Routes>
       </socketCtx.Provider>
+      <Toaster/>
   </>
 }
 

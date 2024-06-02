@@ -1,11 +1,7 @@
 
 
-import { FormEvent, useContext, useEffect, useRef, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { socketCtx } from "../App";
-interface Props {
-    displayName: string,
-    myColor: 'red' | 'yellow'
-}
 
 interface Message {
     author: string,
@@ -13,14 +9,20 @@ interface Message {
     content: string
 }
 
+interface Props {
+    displayName: string,
+    myColor: 'red' | 'yellow'
+    isMobile?: boolean
+    messages: Message[]
+    setMessages: Dispatch<SetStateAction<Message[]>>
+}
+
 import ChatMessage from "./ChatMessage";
 
-export default function ChatBox({displayName, myColor}: Props){
+export default function ChatBox({displayName, myColor,messages,setMessages, isMobile = false}: Props){
 
     const chatForm = useRef<HTMLFormElement>(null)
     const msgInput = useRef<HTMLInputElement>(null)
-
-    const [messages,setMessages] = useState<Message[]>([])
 
     const socket = useContext(socketCtx)
 
@@ -49,11 +51,6 @@ export default function ChatBox({displayName, myColor}: Props){
         // chatForm?.current?.addEventListener("submit",addNewMessage)
 
 
-        socket.on('opp-new-message',(newMessage) => {
-
-            setMessages(prev => [...prev,newMessage])
-
-        })
 
         // return () => {
         //     chatForm?.current?.removeEventListener("submit",addNewMessage)
@@ -62,7 +59,7 @@ export default function ChatBox({displayName, myColor}: Props){
 
     return <>
     
-        <div className="absolute rounded-md left-[3%] bg-blue-700 h-[250px] w-[400px] flex flex-col items-center" >
+        <div className={`${isMobile ? 'flex w-[100%]' : 'absolute left-[3%] hidden w-[350px]'}  xl:flex rounded-md bg-blue-700 h-[250px]  flex-col items-center`} >
             <p className="text-center text-blue-200" >Chat</p>
             
             <div className=" w-[95%] grow bg-blue-800 overflow-y-scroll">

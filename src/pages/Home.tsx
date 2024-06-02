@@ -1,5 +1,5 @@
 import { createContext, SetStateAction, useState } from "react"
-import patternImg from '../assets/pattern.png'
+import patternImg from '@/assets/pattern.png'
 
 
 interface Props {
@@ -17,7 +17,7 @@ export default function Home({ setName , setRoom}: Props) {
         <div className="flex gap-20 flex-col justify-center items-center bg-blue-600 h-screen w-screen">
 
             <div className=" absolute w-screen h-screen overflow-hidden" >
-                <div className="bg-chip-pattern bg-repeat animate-slide h-[1000vh] w-[1000vw] animate-slide" ></div>
+                <div className="bg-chip-pattern bg-repeat animate-slide h-[1000vh] w-[1000vw] " ></div>
             </div>
 
             <h1 className="text-5xl text-center text-white font-medium z-10" >Connect4 But Better!</h1>
