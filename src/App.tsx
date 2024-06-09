@@ -8,7 +8,7 @@ import { Game } from './pages/Game'
 import Home from './pages/Home'
 import { Toaster } from './components/ui/toaster'
 
-const backendUrl = 'ws://localhost:3000'
+const backendUrl = import.meta.env.VITE_PROD_URL || 'ws://localhost:3000'
 const socket = io(backendUrl)
 
 export const socketCtx = createContext<typeof socket>(socket)
